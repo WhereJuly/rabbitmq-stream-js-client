@@ -57,7 +57,7 @@ import { coerce, lt } from "semver"
 import EventEmitter from "events"
 import { MetadataUpdateResponse } from "./responses/metadata_update_response"
 import { MetadataInfo } from "./responses/raw_response"
-import Code51Exception, { TResponseCode } from "./application/Code51Exception"
+import RMQProtocolResponseError, { TResponseCode } from "./rmq_protocol_response_error"
 
 export type ConnectionClosedListener = (hadError: boolean) => void
 
@@ -622,7 +622,7 @@ export class Connection {
     if (!res.ok) {
       const code = res.code as TResponseCode
 
-      throw new Code51Exception(`Query offset command returned error with code ${res.code}`, code)
+      throw new RMQProtocolResponseError(`Query offset command returned error with code ${res.code}`, code)
     }
     this.logger.debug(`Query Offset response: ${res.ok} with params: '${inspect(params)}'`)
     return res.offsetValue

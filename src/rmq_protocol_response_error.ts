@@ -1,6 +1,4 @@
-"use strict"
-
-import { ResponseCode } from "../util"
+import { ResponseCode } from "./util"
 
 export type TResponseCode = (typeof ResponseCode)[keyof typeof ResponseCode]
 
@@ -19,19 +17,19 @@ export type TResponseCode = (typeof ResponseCode)[keyof typeof ResponseCode]
  * let result: any;
  *
  * const isRethrowable = (error_: Error) => {
- *     const isGenericError = error_ instanceof Code51Exception;
- *     const isNonManagedResponseCode = (error_ as Code51Exception).code !== ResponseCode.NoOffset;
+ *     const isGenericError = error_ instanceof RMQProtocolResponseError;
+ *     const isNonManagedResponseCode = (error_ as RMQProtocolResponseError).code !== ResponseCode.NoOffset;
  *
  *     return isGenericError && isNonManagedResponseCode;
  * };
  *
  * try {
- *     result = consumer.queryOffset();
+ *     result = await consumer.queryOffset();
  *     // ... process result
  * } catch (error_) {
  *     if (isRethrowable(error_)) { throw error_; }
  *
- *     const error = error_ as Code51Exception;
+ *     const error = error_ as RMQProtocolResponseError;
  *     if (error.code === ResponseCode.NoOffset) { return null; }
  *
  *     return result;
@@ -39,21 +37,14 @@ export type TResponseCode = (typeof ResponseCode)[keyof typeof ResponseCode]
  * ```
  *
  */
-export default class Code51Exception extends Error {
-  readonly #code?: TResponseCode
+export default class RMQProtocolResponseError extends Error {
+  readonly #code: TResponseCode
 
-  constructor(message: string, rmqStreamResponseCode?: TResponseCode) {
+  constructor(message: string, rmqStreamResponseCode: TResponseCode) {
     super(message)
 
-    Object.setPrototypeOf(this, new.target.prototype)
-
     this.name = this.constructor.name
-    this.#code = rmqStreamResponseCode ?? undefined
-
-    // Maintains proper stack trace for where our error was thrown (only available on V8)
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor)
-    }
+    this.#code = rmqStreamResponseCode
   }
 
   public get code(): TResponseCode | undefined {
