@@ -62,8 +62,6 @@ export const wait = async (ms: number) => {
 export const ResponseCode = {
   StreamDoesNotExist: 2,
   SubscriptionIdDoesNotExist: 4,
-
-  // Used in src/connection.ts/Connection.queryOffset method
   NoOffset: 19,
 } as const
 
