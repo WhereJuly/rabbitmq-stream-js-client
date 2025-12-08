@@ -1,7 +1,3 @@
-import { ResponseCode } from "./util"
-
-export type TResponseCode = (typeof ResponseCode)[keyof typeof ResponseCode]
-
 /**
  * Provides distinct domain exception for the package. Contains the optional
  * RabbitMQ Stream protocol response code for more convenient processing.
