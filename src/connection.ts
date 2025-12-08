@@ -579,7 +579,7 @@ export class Connection {
   }
 
   /**
-   * Return the server-side saved offset or throws {@link Code51Exception} with the
+   * Return the server-side saved offset or throws {@link RMQProtocolResponseError} with the
    * RabbitMQ response code.
    *
    * @see https://www.rabbitmq.com/tutorials/tutorial-two-javascript-stream
@@ -611,7 +611,7 @@ export class Connection {
    *   // Note the offset is saved by the message handler on the server.
    * ```
    *
-   * @throws {@link Code51Exception} if the server-side offset cannot be retrieved. The exception
+   * @throws {@link RMQProtocolResponseError} if the server-side offset cannot be retrieved. The exception
    * contains the `code` field that equals the RabbitMQ stream protocol response code value.
    *
    * @see https://github.com/rabbitmq/rabbitmq-server/blob/main/deps/rabbitmq_stream/docs/PROTOCOL.adoc#response-codes
