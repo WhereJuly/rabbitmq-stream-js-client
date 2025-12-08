@@ -17,8 +17,8 @@ export type TResponseCode = (typeof ResponseCode)[keyof typeof ResponseCode]
  * let result: any;
  *
  * const isRethrowable = (error_: Error) => {
- *     const isGenericError = error_ instanceof RMQProtocolResponseError;
- *     const isNonManagedResponseCode = (error_ as RMQProtocolResponseError).code !== ResponseCode.NoOffset;
+ *     const isGenericError = error_ instanceof StreamResponseError;
+ *     const isNonManagedResponseCode = (error_ as StreamResponseError).code !== ResponseCode.NoOffset;
  *
  *     return isGenericError && isNonManagedResponseCode;
  * };
@@ -29,7 +29,7 @@ export type TResponseCode = (typeof ResponseCode)[keyof typeof ResponseCode]
  * } catch (error_) {
  *     if (isRethrowable(error_)) { throw error_; }
  *
- *     const error = error_ as RMQProtocolResponseError;
+ *     const error = error_ as StreamResponseError;
  *     if (error.code === ResponseCode.NoOffset) { return null; }
  *
  *     return result;
@@ -37,17 +37,17 @@ export type TResponseCode = (typeof ResponseCode)[keyof typeof ResponseCode]
  * ```
  *
  */
-export default class RMQProtocolResponseError extends Error {
-  readonly #code: TResponseCode
+export class StreamResponseError extends Error {
+  readonly #responseCode: number
 
-  constructor(message: string, rmqStreamResponseCode: TResponseCode) {
+  constructor(message: string, rmqStreamResponseCode: number) {
     super(message)
 
     this.name = this.constructor.name
-    this.#code = rmqStreamResponseCode
+    this.#responseCode = rmqStreamResponseCode
   }
 
-  public get code(): TResponseCode | undefined {
-    return this.#code
+  public get responseCode(): number | undefined {
+    return this.#responseCode
   }
 }

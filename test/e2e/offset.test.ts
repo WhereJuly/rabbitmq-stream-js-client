@@ -14,7 +14,7 @@ import {
   wait,
 } from "../support/util"
 import { ResponseCode } from "../../src/util"
-import RMQProtocolResponseError from "../../src/rmq_protocol_response_error"
+import { StreamResponseError } from "../../src/stream_response_error"
 
 describe("offset", () => {
   const rabbit = new Rabbit(username, password)
@@ -295,7 +295,7 @@ describe("offset", () => {
       await expectToThrowAsync(() => consumer.queryOffset(), Error, `This socket has been ended by the other party`)
     })
 
-    it("query offset is able to raise RMQProtocolResponseError with ResponseCode.NoOffset code value set if there is no offset", async () => {
+    it("query offset is able to raise StreamResponseError with ResponseCode.NoOffset code value set if there is no offset", async () => {
       const consumer = await client.declareConsumer(
         { stream: testStreamName, consumerRef: "my_consumer", offset: Offset.first() },
         (_message: Message) => {
@@ -306,13 +306,13 @@ describe("offset", () => {
       try {
         await consumer.queryOffset()
 
-        throw new Error("Expected RMQProtocolResponseError to be thrown")
+        throw new Error("Expected StreamResponseError to be thrown")
       } catch (error) {
-        const actual = error as RMQProtocolResponseError
+        const actual = error as StreamResponseError
 
         expect(actual).instanceOf(Error)
-        expect(actual).instanceOf(RMQProtocolResponseError)
-        expect(actual.code).equals(ResponseCode.NoOffset)
+        expect(actual).instanceOf(StreamResponseError)
+        expect(actual.responseCode).equals(ResponseCode.NoOffset)
         expect(actual.message).contain("error with code 19")
       }
     })

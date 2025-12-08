@@ -57,7 +57,7 @@ export const wait = async (ms: number) => {
  * @see https://github.com/rabbitmq/rabbitmq-server/blob/v3.9.x/deps/rabbitmq_stream/docs/PROTOCOL.adoc#response-codes
  *
  * @see {@link connection.ts/Connection.queryOffset}
- * @see {@link application/RMQProtocolResponseError}
+ * @see {@link application/StreamResponseError}
  */
 export const ResponseCode = {
   StreamDoesNotExist: 2,

@@ -57,7 +57,7 @@ import { coerce, lt } from "semver"
 import EventEmitter from "events"
 import { MetadataUpdateResponse } from "./responses/metadata_update_response"
 import { MetadataInfo } from "./responses/raw_response"
-import RMQProtocolResponseError, { TResponseCode } from "./rmq_protocol_response_error"
+import { StreamResponseError } from "./stream_response_error"
 
 export type ConnectionClosedListener = (hadError: boolean) => void
 
@@ -579,7 +579,7 @@ export class Connection {
   }
 
   /**
-   * Return the server-side saved offset or throws {@link RMQProtocolResponseError} with the
+   * Return the server-side saved offset or throws {@link StreamResponseError} with the
    * RabbitMQ response code.
    *
    * @see https://www.rabbitmq.com/tutorials/tutorial-two-javascript-stream
@@ -611,7 +611,7 @@ export class Connection {
    *   // Note the offset is saved by the message handler on the server.
    * ```
    *
-   * @throws {@link RMQProtocolResponseError} if the server-side offset cannot be retrieved. The exception
+   * @throws {@link StreamResponseError} if the server-side offset cannot be retrieved. The exception
    * contains the `code` field that equals the RabbitMQ stream protocol response code value.
    *
    * @see https://github.com/rabbitmq/rabbitmq-server/blob/main/deps/rabbitmq_stream/docs/PROTOCOL.adoc#response-codes
@@ -620,9 +620,9 @@ export class Connection {
     this.logger.debug(`Query Offset...`)
     const res = await this.sendAndWait<QueryOffsetResponse>(new QueryOffsetRequest(params))
     if (!res.ok) {
-      const code = res.code as TResponseCode
+      const code = res.code
 
-      throw new RMQProtocolResponseError(`Query offset command returned error with code ${res.code}`, code)
+      throw new StreamResponseError(`Query offset command returned error with code ${res.code}`, code)
     }
     this.logger.debug(`Query Offset response: ${res.ok} with params: '${inspect(params)}'`)
     return res.offsetValue

@@ -1,17 +1,17 @@
 import { expect } from "chai"
 
-import RMQProtocolResponseError from "../../src/rmq_protocol_response_error"
 import { ResponseCode } from "../../src/util"
+import { StreamResponseError } from "../../src/stream_response_error"
 
-describe("[unit] RMQProtocolResponseError Test", () => {
-  it("Should throw expected RMQProtocolResponseError exception", () => {
+describe("[unit] StreamResponseError Test", () => {
+  it("Should throw expected StreamResponseError exception", () => {
     const expected = { message: "A message", code: ResponseCode.SubscriptionIdDoesNotExist }
     const isExpectedError = (error: unknown) => {
-      return error instanceof RMQProtocolResponseError
+      return error instanceof StreamResponseError
     }
 
     try {
-      throw new RMQProtocolResponseError(expected.message, expected.code)
+      throw new StreamResponseError(expected.message, expected.code)
     } catch (error_) {
       if (!isExpectedError(error_)) {
         expect.fail(`The unexpected error instance was thrown: ${(error_ as Error).constructor.name}`)
@@ -19,9 +19,9 @@ describe("[unit] RMQProtocolResponseError Test", () => {
 
       const actual = error_
 
-      expect(actual).instanceOf(RMQProtocolResponseError)
+      expect(actual).instanceOf(StreamResponseError)
       expect(actual.message).eql(expected.message)
-      expect(actual.code).eql(expected.code)
+      expect(actual.responseCode).eql(expected.code)
     }
   })
 })
