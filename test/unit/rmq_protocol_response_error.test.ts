@@ -13,11 +13,11 @@ describe("[unit] RMQProtocolResponseError Test", () => {
     try {
       throw new RMQProtocolResponseError(expected.message, expected.code)
     } catch (error_) {
-      if (isExpectedError(error_)) {
-        expect.fail(`The unexpected error instance was thrown: ${error_.constructor.name}`)
+      if (!isExpectedError(error_)) {
+        expect.fail(`The unexpected error instance was thrown: ${(error_ as Error).constructor.name}`)
       }
 
-      const actual = error_ as RMQProtocolResponseError
+      const actual = error_
 
       expect(actual).instanceOf(RMQProtocolResponseError)
       expect(actual.message).eql(expected.message)
